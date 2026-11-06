@@ -1,0 +1,36 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  @apply font-sans bg-brocade-ivory text-ink-900 antialiased;
+}
+
+::selection {
+  background: rgba(242, 169, 59, 0.4);
+}
+
+/* 壮锦菱形装饰分隔线 */
+.brocade-divider {
+  height: 6px;
+  background-image: repeating-linear-gradient(
+    90deg,
+    #141b3c 0 24px,
+    #f2a93b 24px 30px,
+    #d91f7a 30px 36px,
+    #141b3c 36px 60px
+  );
+  opacity: 0.9;
+}
+
+.card-hover {
+  transition: box-shadow 0.25s ease, border-color 0.25s ease;
+}
+.card-hover:hover {
+  box-shadow: 0 12px 32px -8px rgba(20, 27, 60, 0.18);
+  border-color: rgba(242, 169, 59, 0.6);
+}
