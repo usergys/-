@@ -1,0 +1,271 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>绣未 · 管理后台</title>
+    <style>
+      :root {
+        --indigo: #141b3c;
+        --indigo-2: #1e2a5e;
+        --gold: #f2a93b;
+        --rose: #d91f7a;
+        --ink: #1a1a1a;
+        --line: #e7e2d6;
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0; font-family: "Noto Sans SC", "Microsoft YaHei", system-ui, sans-serif;
+        background: #faf6ee; color: var(--ink);
+      }
+      header {
+        background: linear-gradient(135deg, var(--indigo), #10173a);
+        color: #fff; padding: 18px 28px; display: flex; align-items: center;
+        justify-content: space-between; gap: 16px; flex-wrap: wrap;
+      }
+      header h1 { margin: 0; font-size: 20px; letter-spacing: 2px; font-family: "Noto Serif SC", serif; }
+      .token-box { display: flex; align-items: center; gap: 8px; }
+      .token-box input {
+        padding: 8px 12px; border-radius: 8px; border: 1px solid rgba(255,255,255,.25);
+        background: rgba(255,255,255,.1); color: #fff; font-size: 13px; width: 220px;
+      }
+      .token-box input::placeholder { color: rgba(255,255,255,.55); }
+      .btn {
+        cursor: pointer; border: none; border-radius: 8px; padding: 8px 14px;
+        font-size: 13px; font-weight: 600; transition: opacity .15s;
+      }
+      .btn:hover { opacity: .9; }
+      .btn-gold { background: var(--gold); color: var(--indigo); }
+      .btn-rose { background: var(--rose); color: #fff; }
+      .btn-ghost { background: rgba(255,255,255,.12); color: #fff; border: 1px solid rgba(255,255,255,.25); }
+      main { max-width: 1100px; margin: 0 auto; padding: 24px 20px 60px; }
+      .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 14px; margin-bottom: 28px; }
+      .stat { background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: 18px; text-align: center; }
+      .stat b { display: block; font-size: 28px; color: var(--indigo); font-family: "Noto Serif SC", serif; }
+      .stat span { font-size: 12px; color: #6b6b6b; }
+      section { background: #fff; border: 1px solid var(--line); border-radius: 14px; padding: 20px; margin-bottom: 22px; }
+      section h2 { margin: 0 0 14px; font-size: 17px; color: var(--indigo); font-family: "Noto Serif SC", serif; }
+      table { width: 100%; border-collapse: collapse; font-size: 13px; }
+      th, td { text-align: left; padding: 9px 10px; border-bottom: 1px solid var(--line); }
+      th { color: #6b6b6b; font-weight: 600; background: #fbf8f1; }
+      .pill { display: inline-block; padding: 2px 9px; border-radius: 999px; font-size: 11px; font-weight: 600; }
+      .pill-sys { background: #eef1fb; color: var(--indigo-2); }
+      .pill-cus { background: #fdeaf3; color: var(--rose); }
+      .pill-pending { background: #fff3df; color: #b9772a; }
+      .pill-done { background: #e7f6ec; color: #2e8b57; }
+      .thumb { width: 44px; height: 44px; object-fit: contain; border: 1px solid var(--line); border-radius: 8px; background: #fff; }
+      .upload-form { display: flex; flex-wrap: wrap; gap: 10px; align-items: flex-end; margin-bottom: 16px; }
+      .upload-form label { font-size: 12px; color: #555; display: flex; flex-direction: column; gap: 4px; }
+      .upload-form input[type=text], .upload-form input[type=file] {
+        padding: 8px 10px; border: 1px solid var(--line); border-radius: 8px; font-size: 13px;
+      }
+      .empty { color: #999; font-size: 13px; padding: 14px 0; }
+      .msg { font-size: 12px; margin: 8px 0; min-height: 16px; }
+      .msg-err { color: var(--rose); }
+      .msg-ok { color: #2e8b57; }
+      select { padding: 5px 8px; border-radius: 6px; border: 1px solid var(--line); font-size: 12px; }
+      a { color: var(--indigo-2); }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>绣未 · 管理后台</h1>
+      <div class="token-box">
+        <input id="token" placeholder="管理员 Token（默认 xiuwei-admin）" />
+        <button class="btn btn-ghost" onclick="saveToken()">保存</button>
+      </div>
+    </header>
+
+    <main>
+      <div class="stats" id="stats"></div>
+
+      <section>
+        <h2>纹样管理（含自定义上传）</h2>
+        <div class="upload-form">
+          <label>纹样名称<input id="p-name" type="text" placeholder="如：太阳纹" /></label>
+          <label>寓意<input id="p-meaning" type="text" placeholder="简短寓意" /></label>
+          <label>标签（逗号分隔）<input id="p-tags" type="text" placeholder="几何,吉祥" /></label>
+          <label>上传人手机号<input id="p-phone" type="text" placeholder="选填" /></label>
+          <label>纹样图片<input id="p-file" type="file" accept="image/*" /></label>
+          <button class="btn btn-gold" onclick="uploadPattern()">上传纹样</button>
+        </div>
+        <div class="msg" id="p-msg"></div>
+        <div id="patterns-table"></div>
+      </section>
+
+      <section>
+        <h2>订单管理</h2>
+        <div id="orders-table"></div>
+      </section>
+
+      <section>
+        <h2>收藏管理</h2>
+        <div id="fav-table"></div>
+      </section>
+
+      <section>
+        <h2>注册用户</h2>
+        <div id="users-table"></div>
+      </section>
+    </main>
+
+    <script>
+      const $ = (id) => document.getElementById(id);
+      function getToken() {
+        return localStorage.getItem("xiuwei-admin-token") || "xiuwei-admin";
+      }
+      function saveToken() {
+        const v = $("token").value.trim();
+        if (v) localStorage.setItem("xiuwei-admin-token", v);
+        else localStorage.removeItem("xiuwei-admin-token");
+        $("token").value = getToken();
+        loadAll();
+      }
+      function authHeaders() {
+        return { Authorization: "Bearer " + getToken(), "Content-Type": "application/json" };
+      }
+      function esc(s) {
+        return String(s == null ? "" : s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+      }
+      function statusPill(s) {
+        const cls = s === "done" || s === "已完成" ? "pill-done" : "pill-pending";
+        return `<span class="pill ${cls}">${esc(s)}</span>`;
+      }
+      function sourcePill(src) {
+        return src === "custom"
+          ? '<span class="pill pill-cus">自定义</span>'
+          : '<span class="pill pill-sys">系统</span>';
+      }
+
+      async function loadAll() {
+        $("token").value = getToken();
+        await loadStats();
+        await loadPatterns();
+        await loadOrders();
+        await loadFavorites();
+        await loadUsers();
+      }
+
+      async function loadStats() {
+        try {
+          const r = await fetch("/admin/stats", { headers: authHeaders() });
+          const d = await r.json();
+          if (!d.ok) { $("stats").innerHTML = `<div class="empty">统计加载失败：${esc(d.message)}</div>`; return; }
+          const s = d.stats;
+          $("stats").innerHTML = [
+            ["用户", s.users], ["纹样总数", s.patterns], ["自定义纹样", s.customPatterns],
+            ["订单", s.orders], ["收藏", s.favorites], ["存储", s.driver],
+          ].map(([k, v]) => `<div class="stat"><b>${v}</b><span>${k}</span></div>`).join("");
+        } catch (e) {
+          $("stats").innerHTML = `<div class="empty">统计接口错误</div>`;
+        }
+      }
+
+      async function loadPatterns() {
+        const d = await (await fetch("/api/patterns")).json();
+        if (!d.ok) { $("patterns-table").innerHTML = `<div class="empty">加载失败</div>`; return; }
+        if (!d.patterns.length) { $("patterns-table").innerHTML = `<div class="empty">暂无纹样</div>`; return; }
+        $("patterns-table").innerHTML = `<table><thead><tr>
+          <th>ID</th><th>预览</th><th>名称</th><th>类型</th><th>标签</th><th>寓意</th><th>操作</th>
+        </tr></thead><tbody>${d.patterns.map((p) => `<tr>
+          <td>${p.id}</td>
+          <td>${p.image ? `<img class="thumb" src="${esc(p.image)}" />` : "—"}</td>
+          <td>${esc(p.name)}</td>
+          <td>${sourcePill(p.source)}</td>
+          <td>${esc((p.tags || []).join("、"))}</td>
+          <td>${esc(p.meaning).slice(0, 40)}</td>
+          <td>${p.source === "custom" ? `<button class="btn btn-rose" onclick="delPattern(${p.id})">删除</button>` : "—"}</td>
+        </tr>`).join("")}</tbody></table>`;
+      }
+
+      async function uploadPattern() {
+        const fd = new FormData();
+        const name = $("p-name").value.trim();
+        if (!name) { $("p-msg").className = "msg msg-err"; $("p-msg").textContent = "请填写纹样名称"; return; }
+        fd.append("name", name);
+        fd.append("meaning", $("p-meaning").value.trim());
+        fd.append("tags", $("p-tags").value.trim());
+        fd.append("uploaderPhone", $("p-phone").value.trim());
+        if ($("p-file").files[0]) fd.append("file", $("p-file").files[0]);
+        const r = await fetch("/api/patterns", { method: "POST", headers: { Authorization: "Bearer " + getToken() }, body: fd });
+        const d = await r.json();
+        if (d.ok) {
+          $("p-msg").className = "msg msg-ok"; $("p-msg").textContent = "上传成功：" + d.pattern.name;
+          $("p-name").value = $("p-meaning").value = $("p-tags").value = $("p-phone").value = ""; $("p-file").value = "";
+          loadPatterns(); loadStats();
+        } else {
+          $("p-msg").className = "msg msg-err"; $("p-msg").textContent = "失败：" + (d.errors || [d.message]).join("；");
+        }
+      }
+
+      async function delPattern(id) {
+        if (!confirm("确认删除该自定义纹样？")) return;
+        const r = await fetch("/api/patterns/" + id, { method: "DELETE", headers: authHeaders() });
+        const d = await r.json();
+        if (d.ok) { loadPatterns(); loadStats(); } else alert(d.message || "删除失败");
+      }
+
+      async function loadOrders() {
+        const r = await fetch("/api/orders", { headers: authHeaders() });
+        const d = await r.json();
+        if (!d.ok) { $("orders-table").innerHTML = `<div class="empty">加载失败：${esc(d.message || "")}</div>`; return; }
+        if (!d.orders.length) { $("orders-table").innerHTML = `<div class="empty">暂无订单</div>`; return; }
+        $("orders-table").innerHTML = `<table><thead><tr>
+          <th>ID</th><th>手机号</th><th>产品</th><th>纹样</th><th>状态</th><th>创建时间</th><th>操作</th>
+        </tr></thead><tbody>${d.orders.map((o) => `<tr>
+          <td>${o.id}</td><td>${esc(o.phone)}</td><td>${esc(o.product)}</td>
+          <td>${esc(o.patternName || o.pattern || "—")}</td>
+          <td>${statusPill(o.status)}</td>
+          <td>${esc((o.createdAt || "").slice(0, 19).replace("T", " "))}</td>
+          <td><select onchange="setStatus(${o.id}, this.value)">
+            <option value="pending" ${o.status === "pending" ? "selected" : ""}>待处理</option>
+            <option value="done" ${o.status === "done" ? "selected" : ""}>已完成</option>
+          </select></td>
+        </tr>`).join("")}</tbody></table>`;
+      }
+
+      async function setStatus(id, status) {
+        const r = await fetch("/api/orders/" + id + "/status", { method: "PATCH", headers: authHeaders(), body: JSON.stringify({ status }) });
+        const d = await r.json();
+        if (d.ok) loadOrders(); else alert(d.message || "更新失败");
+      }
+
+      async function loadFavorites() {
+        const d = await (await fetch("/admin/favorites", { headers: authHeaders() })).json();
+        if (!d.ok) { $("fav-table").innerHTML = `<div class="empty">加载失败：${esc(d.message || "")}</div>`; return; }
+        if (!d.favorites.length) { $("fav-table").innerHTML = `<div class="empty">暂无收藏</div>`; return; }
+        $("fav-table").innerHTML = `<table><thead><tr>
+          <th>ID</th><th>手机号</th><th>纹样</th><th>预览</th><th>创建时间</th><th>操作</th>
+        </tr></thead><tbody>${d.favorites.map((f) => `<tr>
+          <td>${f.id}</td><td>${esc(f.phone)}</td>
+          <td>${esc(f.patternName || "—")}</td>
+          <td>${f.patternImage ? `<img class="thumb" src="${esc(f.patternImage)}" />` : "—"}</td>
+          <td>${esc((f.createdAt || "").slice(0, 19).replace("T", " "))}</td>
+          <td><button class="btn btn-rose" onclick="delFav(${f.id})">取消</button></td>
+        </tr>`).join("")}</tbody></table>`;
+      }
+
+      async function delFav(id) {
+        if (!confirm("确认取消该收藏？")) return;
+        const r = await fetch("/api/favorites/" + id, { method: "DELETE", headers: authHeaders() });
+        const d = await r.json();
+        if (d.ok) { loadFavorites(); loadStats(); } else alert(d.message || "失败");
+      }
+
+      async function loadUsers() {
+        const d = await (await fetch("/api/users")).json();
+        if (!d.ok) { $("users-table").innerHTML = `<div class="empty">加载失败</div>`; return; }
+        if (!d.users.length) { $("users-table").innerHTML = `<div class="empty">暂无用户</div>`; return; }
+        $("users-table").innerHTML = `<table><thead><tr>
+          <th>ID</th><th>昵称</th><th>手机号</th><th>邮箱</th><th>收货人</th><th>地址</th>
+        </tr></thead><tbody>${d.users.map((u) => `<tr>
+          <td>${u.id}</td><td>${esc(u.nickname)}</td><td>${esc(u.phone)}</td><td>${esc(u.email || "—")}</td>
+          <td>${esc(u.receiver || "—")}</td>
+          <td>${esc([u.province, u.city, u.district, u.address].filter(Boolean).join(""))}</td>
+        </tr>`).join("")}</tbody></table>`;
+      }
+
+      loadAll();
+    </script>
+  </body>
+</html>

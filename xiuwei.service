@@ -1,0 +1,24 @@
+[Unit]
+Description=Xiuwei Platform (绣未)
+After=network.target
+
+[Service]
+Type=simple
+User=xiuwei
+Group=xiuwei
+WorkingDirectory=/opt/xiuwei
+EnvironmentFile=/etc/xiuwei/env
+ExecStart=/usr/bin/node server/index.js
+Restart=always
+RestartSec=3
+StandardOutput=append:/var/log/xiuwei/access.log
+StandardError=append:/var/log/xiuwei/error.log
+
+# 安全加固
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=full
+ReadWritePaths=/opt/xiuwei/server/data /opt/xiuwei/server/uploads /var/log/xiuwei
+
+[Install]
+WantedBy=multi-user.target

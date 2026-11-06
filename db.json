@@ -1,0 +1,86 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "nickname": "dha",
+      "phone": "19711627686",
+      "email": "891419954@qq.com",
+      "receiver": "qf",
+      "phone2": "19711627686",
+      "province": "广西壮族自治区",
+      "city": "南宁市",
+      "district": "青秀区",
+      "address": "三琪广场",
+      "createdAt": "2026-10-25T08:20:25.995Z",
+      "updatedAt": "2026-10-25T08:20:25.995Z"
+    }
+  ],
+  "patterns": [
+    {
+      "id": 1,
+      "source": "system",
+      "name": "壮锦纹样",
+      "meaning": "中国四大名锦之一，以菱形几何为骨架，配以回纹、水波纹，色彩浓艳对比强烈，寓意吉祥兴旺。",
+      "tags": [
+        "菱形几何",
+        "回纹",
+        "配色浓烈"
+      ],
+      "region": "南宁",
+      "video": "/videos/element-1.mp4",
+      "image": null,
+      "uploaderPhone": null,
+      "createdAt": "2026-10-27T06:44:45.531Z"
+    },
+    {
+      "id": 2,
+      "source": "system",
+      "name": "铜鼓纹饰",
+      "meaning": "铜鼓是广西壮族的礼乐重器，中心为太阳纹，环布翔鹭纹、青蛙立饰，承载祈雨庆丰的古老信仰。",
+      "tags": [
+        "太阳纹",
+        "翔鹭纹",
+        "青蛙饰"
+      ],
+      "region": "河池",
+      "video": "/videos/element-2.mp4",
+      "image": null,
+      "uploaderPhone": null,
+      "createdAt": "2026-10-27T06:44:45.531Z"
+    },
+    {
+      "id": 3,
+      "source": "system",
+      "name": "绣球工艺",
+      "meaning": "靖西旧州绣球，十二瓣合成一球，瓣上绣花鸟吉祥图案，是壮家传情达意与祈福的信物。",
+      "tags": [
+        "十二瓣",
+        "花鸟刺绣",
+        "传情信物"
+      ],
+      "region": "百色靖西",
+      "video": "/videos/element-3.mp4",
+      "image": null,
+      "uploaderPhone": null,
+      "createdAt": "2026-10-27T06:44:45.531Z"
+    },
+    {
+      "id": 4,
+      "source": "system",
+      "name": "民族服饰纹样",
+      "meaning": "壮族、瑶族、苗族服饰上的织锦与挑花纹样，记录族群迁徙记忆与自然崇拜，针线之间皆是史诗。",
+      "tags": [
+        "织锦",
+        "挑花",
+        "族群记忆"
+      ],
+      "region": "来宾金秀",
+      "video": "/videos/element-4.mp4",
+      "image": null,
+      "uploaderPhone": null,
+      "createdAt": "2026-10-27T06:44:45.531Z"
+    }
+  ],
+  "favorites": [],
+  "orders": []
+}
